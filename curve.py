@@ -47,15 +47,3 @@ class Curve:
     def closest_prev_term(deltas: Dict[dt.timedelta, dt.datetime]) -> dt.datetime:
         mindelta = min(deltas.keys())
         return deltas[mindelta]
-
-
-if __name__ == '__main__':
-    salary_schedule = {
-        "01/01/2020": 65000.0,
-        "01/01/2021": 85000.0,
-        "01/01/2022": 90000.0
-    }
-
-    salary_curve = Curve(schedule=salary_schedule)
-    rate = salary_curve.rate("01/05/2021")
-    print(rate)
