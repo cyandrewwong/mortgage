@@ -1,24 +1,49 @@
-from typing import *
-from curve import Curve
-from scenario import Scenario
-from collection import CurveCollection
-from testscenario import TestScenario
 import datetime as dt
+import pandas as pd
+from scenario import Scenario
+from typing import *
 
 
-class MortgageCalculator:
-    def __init__(self, scen: Scenario, curves: CurveCollection = None):
-        self._valdate = scen.valdate
-        self._property_val = scen.property_val
-        self._deposit = MortgageCalculator.imply_deposit(scen.deposit, scen.property_val)
-        self._curves = curves
+class MortgageSchedule:
+    def __init__(self, fixedrate: float, fixedmonths: int, maxterm: int):
+        """
+        :param fixedrate: Fixed interest rate
+        :param fixedmonths: In terms of months eg. '12M'
+        """
+        self._fixedrate = fixedrate
+        self._fixedmonths = fixedmonths
+        self._maxterm = maxterm
+
+    def fixed_enddate(self, valdate: dt.date) -> dt.date:
+        """
+        :param valdate: MortgageStartDate
+        :return: Date of when fixed period ends
+        """
+        return valdate + dt.timedelta(days=self._fixedmonths * 30)
+
+    def enddate(self, valdate: dt.date) -> dt.date:
+        return valdate + dt.timedelta(days=self._maxterm * 365)
+
+    def fixed_schedule(self, valdate: dt.date, mortgage_val: float):
+        dates = [valdate]
+        for month in range(1, self._fixedmonths + 1):
+            dates.append(valdate + dt.timedelta(days=month * 30))
+        return pd.Series(data=[self._fixedrate * mortgage_val], index=dates)
+
+
+class Mortgage:
+    def __init__(self, scenario: Scenario, valdate: dt.date, schedule: MortgageSchedule):
+        self._valdate = valdate
+        self._property_val = scenario.property_val
+        self._deposit = Mortgage.imply_deposit(scenario.deposit, self._property_val)
+        self._schedule = schedule
 
     @property
-    def deposit(self):
+    def deposit(self) -> float:
         return self._deposit
 
     @staticmethod
-    def imply_deposit(deposit: Any, principle: float = 0.0):
+    def imply_deposit(deposit: Any, principle: float = 0.0) -> float:
         if isinstance(deposit, float):
             return deposit
         elif isinstance(deposit, str) and '%' in deposit:
@@ -26,6 +51,6 @@ class MortgageCalculator:
             pct = float(deposit[0:idx]) / 100
             return principle * pct
 
-
-if __name__ == '__main__':
-    calculator = MortgageCalculator(TestScenario.scenario, )
+    def interest_schedule(self):
+        result = pd.DataFrame(columns=['PayDate', 'Interest'])
+        result.append(self._schedule.fixed_schedule(self._valdate, self._property_val * 1 - self._deposit))
