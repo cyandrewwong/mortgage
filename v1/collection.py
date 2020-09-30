@@ -1,4 +1,4 @@
-from curve import Curve
+from v1.curve import Curve
 from typing import *
 
 

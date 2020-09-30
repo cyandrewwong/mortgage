@@ -1,8 +1,7 @@
-from stampduty import StampDuty
-from curve import Curve
-from collection import CurveCollection
-from scenario import Scenario
-from calculator_mortgage import Mortgage
+from v1.stampduty import StampDuty
+from v1.curve import Curve
+from v1.collection import CurveCollection
+from v1.calculator_mortgage import *
 from datetime import date
 
 
@@ -14,6 +13,13 @@ class TestStampDuty:
     def test_cost2(self):
         stampduty = StampDuty(550000, date.today())
         assert stampduty.cost() == 2500
+
+
+class TestMortgageSchedule:
+    def test_schedule(self):
+        scheduler = MortgageSchedule(0.1, 3, 35)
+        sched = scheduler.fixed_schedule(date(2020, 8, 30), 50000)
+        assert sched == pd.Series()
 
 
 class TestMortgage:

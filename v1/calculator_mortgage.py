@@ -1,6 +1,6 @@
 import datetime as dt
 import pandas as pd
-from scenario import Scenario
+from v1.scenario import Scenario
 from typing import *
 
 
@@ -28,6 +28,7 @@ class MortgageSchedule:
         dates = [valdate]
         for month in range(1, self._fixedmonths + 1):
             dates.append(valdate + dt.timedelta(days=month * 30))
+            mortgage_val
         return pd.Series(data=[self._fixedrate * mortgage_val], index=dates)
 
 

@@ -13,14 +13,14 @@ class StampDuty:
         self._thresholds = self.define_thresholds(thresholds)
 
     # TODO Finish me
-    def define_thresholds(self, thresholds: List[Tuple[float, float, float]] = None) -> List[
-        Tuple[float, float, float]]:
+    def define_thresholds(self, thresholds: List[Tuple[float, float, float]] = None) -> \
+            List[Tuple[float, float, float]]:
         if thresholds is None and self._valdate < date(2021, 4, 1):
             if self._london:
-                return [(1500000.0, 9999999999.0, 0.12),
-                        (925000.0, 1500000.0, 0.1),
-                        (500000.0, 925000.0, 0.05),
-                        (0.0, 500000.0, 0.0)]
+                return [(1500000.0,     9999999999.0,   0.12),
+                        (925000.0,      1500000.0,      0.1),
+                        (500000.0,      925000.0,       0.05),
+                        (0.0,           500000.0,       0.0)]
             else:
                 return [(0.0, 0.0, 0.0)]
 
