@@ -10,4 +10,4 @@ class TestALL:
     def test_rates(self):
         rates = self.calc_interest.build_rates()
         assert rates == pd.Series([0.00275 * 0.9 * 600000, 0.00275 * 0.9 * 600000],
-                                  [dt.date(2020, 9, 30), dt.date(2020, 10, 31)])
+                                                  [dt.date(2020, 9, 30), dt.date(2020, 10, 31)])

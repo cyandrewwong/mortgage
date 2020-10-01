@@ -1,10 +1,12 @@
 import datetime as dt
 import pandas as pd
 from typing import *
+from v2.interest_calc import InterestRatesCalculator
 
 
 class Mortgage:
-    def __init__(self, start: dt.date, periods: int, property_val: float, deposit: float):
+    def __init__(self, start: dt.date, periods: int, property_val: float, deposit: float, fixed_rate: float,
+                 fixed_periods: int):
         """
 
         :param start: string fmt of date 'dd-mm-yyyy'
@@ -14,8 +16,10 @@ class Mortgage:
         """
         self._property_val = property_val
         self._deposit = deposit
+        self._fixed_rate = fixed_rate
+        self._fixeed_periods = fixed_periods
         self._loan = self._property_val - self._deposit
-        self._headers = ['LoanValue']
+        self._headers = ['CashFlow']
         self._flows_table = self._init_flowstable(start, periods)
 
     def _init_flowstable(self, start: dt.date, periods: int) -> pd.DataFrame:
@@ -37,6 +41,19 @@ class Mortgage:
     def flows_table(self):
         return self._flows_table
 
+    def generate_flows(self) -> None:
+        calculator = InterestRatesCalculator(self._flows_table, self._fixed_rate, self._fixeed_periods)
+        self._flows_table = calculator.build_schedule()
+
 
 if __name__ == '__main__':
-    calc = Mortgage(dt.date(2020, 9, 30), 10 * 12)
+    date_ = dt.date(2020, 9, 30)
+    periods_ = 10 * 12
+    property_val_ = 550000.0
+    deposit_ = 0.05
+    fixed_rate_ = 0.02
+    fixed_periods_ = 24
+
+    calc = Mortgage(date_, periods_, property_val_, deposit_, fixed_rate_, fixed_periods_)
+    calc.generate_flows()
+    print()
