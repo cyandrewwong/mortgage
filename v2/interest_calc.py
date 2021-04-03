@@ -1,4 +1,5 @@
 import pandas as pd
+import datetime as dt
 
 
 class MortgagePayments:
@@ -27,7 +28,7 @@ class MortgagePayments:
         self._df['M_InterestRate'] = self._df['M_Annual_InterestRate'] / 12
 
     # TODO: Possible Change Repyaments/Overpayments
-    def _build_loan_schedule(self):
+    def _build_loan_schedule(self) -> None:
         loan_value = []
         rates = self._df['M_InterestRate'].astype(float).tolist()
 
@@ -43,8 +44,22 @@ class MortgagePayments:
 
         self._df['LTV'] = self._df['M_LoanValue'] / 600000
 
-        print()
-
 
 class EquityLoanPayments:
-    pass
+    def __init__(self, loan_value: float, start: dt.date, end: dt.date):
+        self._loan_value = loan_value
+        self._start = start
+        self._end = end
+        self._schedule = self._init_schedule()
+
+    def _init_schedule(self) -> pd.DatetimeIndex:
+        expiry = pd.date_range(self._start, periods= 12 * 25, freq='M')
+        expiry = pd.to_datetime(expiry[expiry.shape[0]-1]).date()
+        schedule = pd.date_range(self._start, periods=12 * 25, freq='M') if self._end > expiry else pd.date_range(
+            self._start, self._end, freq='M')
+        return schedule
+
+
+if __name__ == '__main__':
+    equity = EquityLoanPayments(50000, dt.datetime.today().date(), dt.date(2050, 10, 25))
+    print()

@@ -50,7 +50,7 @@ class Mortgage:
 
 if __name__ == '__main__':
     date_ = dt.date(2020, 9, 30)
-    periods_ = 10 * 12
+    periods_ = 30 * 12
     property_val_ = 600000.0
     deposit_ = 0.05
     equity_loan_ = property_val_ * 0.4
